@@ -1,0 +1,5 @@
+.api_key
+markets.json
+markets_db/
+log.txt
+pid.txt

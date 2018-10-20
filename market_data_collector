@@ -1,0 +1,15 @@
+#! /bin/bash
+
+start()
+{
+  nohup /usr/bin/python3 -u MarketDataCollector.py TIME_SERIES_INTRADAY 60min > log.txt 2>&1 & echo $! > pid.txt
+}
+
+stop()
+{
+  cat pid.txt | xargs kill
+}
+
+case $1 in
+  start|stop) "$1" ;;
+esac
