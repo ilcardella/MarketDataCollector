@@ -42,7 +42,7 @@ if __name__ == '__main__':
     try:
         # Read AlphaVantage API KEY
         with open('.api_key', 'r') as f:
-            key = f.readLine()
+            key = f.readline()
             AV_APIKEY = key
     except IOError:
         logging.error(".api_key file not found!")
