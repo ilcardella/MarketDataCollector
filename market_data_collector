@@ -1,10 +1,11 @@
 #! /bin/bash
 
-INSTALL_PATH=/home/alberto/workspace/MarketDataCollector
+INSTALL_PATH=/path/to/script/MarketDataCollector
 
 start()
 {
-  nohup python3 -u ${INSTALL_PATH}/MarketDataCollector.py TIME_SERIES_INTRADAY 60min > log.txt 2>&1 & echo $! > pid.txt
+  nohup python3 -u $INSTALL_PATH/MarketDataCollector.py TIME_SERIES_DAILY > log.txt 2>&1 & echo $! > pid.txt
+  #nohup python3 -u $INSTALL_PATH/MarketDataCollector.py TIME_SERIES_INTRADAY 60min > log.txt 2>&1 & echo $! > pid.txt
 }
 
 stop()

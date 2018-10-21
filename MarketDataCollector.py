@@ -31,13 +31,19 @@ def get_historic_price(marketId, function, interval, apiKey):
     return json.loads(data.text)
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
+    if len(sys.argv) < 2:
         logging.error("Wrong number of arguments")
         exit()
 
     # Read input arguments
     AV_FUNCTION = sys.argv[1]
-    AV_INTERVAL = sys.argv[2]
+    AV_INTERVAL = ''
+    if AV_FUNCTION is 'TIME_SERIES_INTRADAY':
+        AV_INTERVAL = sys.argv[2]
+        if len(AV_INTERVAL) == 0 or AV_INTERVAL is None:
+            logging.error("Wrong number of arguments")
+            exit()
+
     AV_APIKEY = ''
     try:
         # Read AlphaVantage API KEY
