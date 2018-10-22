@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
     # Read input arguments
     AV_FUNCTION = sys.argv[1]
-    AV_INTERVAL = ''
+    AV_INTERVAL = '1day'
     if AV_FUNCTION is 'TIME_SERIES_INTRADAY':
         AV_INTERVAL = sys.argv[2]
         if len(AV_INTERVAL) == 0 or AV_INTERVAL is None:
