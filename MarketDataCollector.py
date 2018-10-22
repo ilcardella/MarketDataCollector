@@ -62,6 +62,7 @@ if __name__ == '__main__':
             markets = json.load(fileReader)
             logging.info("Markets json loaded")
             for market in markets:
+                time.sleep(TIMEOUT)
                 # Extract market Id
                 marketId = market['instrument']['marketId']
                 # Convert the string for alpha vantage
@@ -82,7 +83,6 @@ if __name__ == '__main__':
                 with open('{}/{}_{}.json'.format(marketFolder, marketId, ts), 'w') as fileWriter:
                     json.dump(data, fileWriter)
                     logging.info("Market {} processed succesfully".format(marketId))
-                time.sleep(TIMEOUT)
             logging.info("Process complete")
     except Exception as e:
         logging.error(e)

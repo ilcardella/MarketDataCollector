@@ -1,6 +1,6 @@
 #! /bin/bash
 
-INSTALL_PATH=/installation/path
+INSTALL_PATH=/home/alberto/workspace/MarketDataCollector
 
 start()
 {
