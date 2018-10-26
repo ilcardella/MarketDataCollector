@@ -26,8 +26,10 @@ logging.basicConfig(level=logging.INFO,
                     format="[%(asctime)s] %(levelname)s: %(message)s")
 
 def get_historic_price(marketId, function, interval, apiKey):
-    intParam = '' if interval is '1day' else '&interval={}'.format(interval)
-    url = 'https://www.alphavantage.co/query?function={}&symbol={}{}&apikey={}'.format(function, marketId, intParam, apiKey)
+    intParam = '&interval={}'.format(interval)
+    if interval == '1day':
+        intParam = ''
+    url = 'https://www.alphavantage.co/query?function={}&symbol={}{}&outputsize=full&apikey={}'.format(function, marketId, intParam, apiKey)
     data = requests.get(url)
     return json.loads(data.text)
 
@@ -39,7 +41,7 @@ if __name__ == '__main__':
     # Read input arguments
     AV_FUNCTION = sys.argv[1]
     AV_INTERVAL = '1day'
-    if AV_FUNCTION is 'TIME_SERIES_INTRADAY':
+    if AV_FUNCTION == 'TIME_SERIES_INTRADAY':
         AV_INTERVAL = sys.argv[2]
         if len(AV_INTERVAL) == 0 or AV_INTERVAL is None:
             logging.error("Wrong number of arguments")
