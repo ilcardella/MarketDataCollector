@@ -1,6 +1,6 @@
 #! /bin/bash
 
-INSTALL_PATH=/path/to/script/MarketDataCollector
+INSTALL_PATH=.
 
 start()
 {

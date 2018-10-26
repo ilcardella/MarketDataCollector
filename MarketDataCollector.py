@@ -26,7 +26,8 @@ logging.basicConfig(level=logging.INFO,
                     format="[%(asctime)s] %(levelname)s: %(message)s")
 
 def get_historic_price(marketId, function, interval, apiKey):
-    url = 'https://www.alphavantage.co/query?function={}&symbol={}&interval={}&apikey={}'.format(function, marketId, interval, apiKey)
+    intParam = '' if interval is '1day' else '&interval={}'.format(interval)
+    url = 'https://www.alphavantage.co/query?function={}&symbol={}{}&apikey={}'.format(function, marketId, intParam, apiKey)
     data = requests.get(url)
     return json.loads(data.text)
 
