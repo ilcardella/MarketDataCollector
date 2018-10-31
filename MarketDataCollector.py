@@ -72,34 +72,32 @@ if __name__ == '__main__':
                 marketIdAV = '{}:{}'.format(MARKET_COUNTRY, marketId.split('-')[0])
 
                 # Fetch historic price
-                data = get_historic_price(marketIdAV, AV_FUNCTION, AV_INTERVAL, AV_APIKEY)
+                newData = get_historic_price(marketIdAV, AV_FUNCTION, AV_INTERVAL, AV_APIKEY)
 
                 # Safety check
-                if 'Error Message' in data or 'Information' in data:
-                    logging.error("Skipping {}: {}".format(marketId, data))
+                if 'Error Message' in newData or 'Information' in newData:
+                    logging.error("Skipping {}: {}".format(marketId, newData))
                     continue
 
-                # Build market folder tree
+                # Build market folder and file names
                 marketFolder = '{}/{}'.format(DB_ROOT_FOLDER, marketId)
                 marketFilename = '{}_{}.json'.format(marketId, AV_INTERVAL)
                 marketFilepath = '{}/{}'.format(marketFolder, marketFilename)
 
-                # If file exist append new data
+                # If file exist update existing data with the new one datapoint
                 if os.path.exists(marketFilepath):
-                    with open(marketFilepath, 'r') as fileReader:
-                        market_series = json.load(fileReader)
-                        prices = market_series['Time Series (60min)']
-                        metaData = market_series['Meta Data']
-                        # TODO iter through the series
-                        # Convert time to London tz
-                        # Find the delta between prices and data
-                        # Push front new data
+                    with open(marketFilepath, 'r+') as fileHandler:
+                        storedData = json.load(fileHandler)
+                        # Update stored dictionary with the new data
+                        storedData.update(newData)
                         # Write file
+                        fileHandler.seek(0)
+                        json.dump(storedData, fileHandler, indent=4, separators=(',', ': '), sort_keys=True)
                 else:
-                    # Create new file
+                    # Create new file for the market with the fetched data
                     os.makedirs(marketFolder, exist_ok=True)
                     with open(marketFilepath, 'w') as fileWriter:
-                        json.dump(data, fileWriter, indent=4, separators=(',', ': '))
+                        json.dump(newData, fileWriter, indent=4, separators=(',', ': '), sort_keys=True)
                 logging.info("Market {} processed succesfully".format(marketId))
             logging.info("Process complete")
     except Exception as e:
