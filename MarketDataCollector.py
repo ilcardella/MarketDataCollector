@@ -70,22 +70,35 @@ if __name__ == '__main__':
                 marketId = market['instrument']['marketId']
                 # Convert the string for alpha vantage
                 marketIdAV = '{}:{}'.format(MARKET_COUNTRY, marketId.split('-')[0])
+
                 # Fetch historic price
-                data = get_historic_price(marketIdAV, AV_FUNCTION, AV_INTERVAL, AV_APIKEY)
+                newData = get_historic_price(marketIdAV, AV_FUNCTION, AV_INTERVAL, AV_APIKEY)
+
                 # Safety check
-                if 'Error Message' in data or 'Information' in data:
-                    logging.error("Skipping {}".format(marketId))
+                if 'Error Message' in newData or 'Information' in newData:
+                    logging.error("Skipping {}: {}".format(marketId, newData))
                     continue
-                # Build market folder tree
-                marketFolder = '{}/{}/{}'.format(DB_ROOT_FOLDER, marketId, AV_INTERVAL)
-                os.makedirs(marketFolder, exist_ok=True)
-                # Get timestamp
-                time_str = dt.datetime.now().isoformat()
-                ts = time_str.replace(':', '_').replace('.', '_')
-                # Write on db
-                with open('{}/{}_{}.json'.format(marketFolder, marketId, ts), 'w') as fileWriter:
-                    json.dump(data, fileWriter)
-                    logging.info("Market {} processed succesfully".format(marketId))
+
+                # Build market folder and file names
+                marketFolder = '{}/{}'.format(DB_ROOT_FOLDER, marketId)
+                marketFilename = '{}_{}.json'.format(marketId, AV_INTERVAL)
+                marketFilepath = '{}/{}'.format(marketFolder, marketFilename)
+
+                # If file exist update existing data with the new one datapoint
+                if os.path.exists(marketFilepath):
+                    with open(marketFilepath, 'r+') as fileHandler:
+                        storedData = json.load(fileHandler)
+                        # Update stored dictionary with the new data
+                        storedData.update(newData)
+                        # Write file
+                        fileHandler.seek(0)
+                        json.dump(storedData, fileHandler, indent=4, separators=(',', ': '), sort_keys=True)
+                else:
+                    # Create new file for the market with the fetched data
+                    os.makedirs(marketFolder, exist_ok=True)
+                    with open(marketFilepath, 'w') as fileWriter:
+                        json.dump(newData, fileWriter, indent=4, separators=(',', ': '), sort_keys=True)
+                logging.info("Market {} processed succesfully".format(marketId))
             logging.info("Process complete")
     except Exception as e:
         logging.error(e)
